@@ -158,18 +158,6 @@ void delete_by_value(int value)
     deleteNode(target);
 }
 
-void clearList()
-{
-    struct dnode *temp = head;
-    while (temp != NULL)
-    {
-        struct dnode *nextNode = temp->next;
-        free(temp);
-        temp = nextNode;
-    }
-    head = NULL;
-    last = NULL;
-}
 
 int main()
 {
@@ -211,6 +199,5 @@ int main()
     delete_by_value(99);
     printList();
 
-    clearList();
     return 0;
 }

@@ -7,9 +7,10 @@ typedef struct TreeNode
     struct TreeNode *left;
     int data;
     struct TreeNode *right;
+    struct TreeNode *parent;
 } TreeNode;
 
-TreeNode *createBinaryTree()
+TreeNode *createBinaryTree(TreeNode *parent)
 {
     TreeNode *p;
     int x;
@@ -20,11 +21,12 @@ TreeNode *createBinaryTree()
     // create current node
     p = (TreeNode *)malloc(sizeof(TreeNode));
     p->data = x;
+    p->parent = parent;
     // recursively create left and right subtree
     printf("Enter left child of %d: \n", x);
-    p->left = createBinaryTree();
+    p->left = createBinaryTree(p);
     printf("Enter right child of %d: \n", x);
-    p->right = createBinaryTree();
+    p->right = createBinaryTree(p);
     return p;
 }
 
@@ -62,6 +64,7 @@ void postorder(TreeNode *t)
         printf("%d ", t->data);
     }
 }
+
 bool TreeSearch(TreeNode *x, int k)
 {
     while (x != NULL && k != x->data)
@@ -92,10 +95,40 @@ TreeNode *TreeMaximum(TreeNode *x)
     return x;
 }
 
+TreeNode *TreeSuccessor(TreeNode *x)
+{
+    if (x->right != NULL)
+    {
+        return TreeMinimum(x->right);
+    }
+    TreeNode *y = x->parent;
+    while (y != NULL && x == y->right)
+    {
+        x = y;
+        y = y->parent;
+    }
+    return y;
+}
+
+TreeNode *TreePredecessor(TreeNode *x)
+{
+    if (x->left != NULL)
+    {
+        return TreeMaximum(x->left);
+    }
+    TreeNode *y = x->parent;
+    while (y != NULL && x == y->left)
+    {
+        x = y;
+        y = y->parent;
+    }
+    return y;
+}
+
 int main()
 {
     TreeNode *root;
-    root = createBinaryTree();
+    root = createBinaryTree(NULL);
 
     printf("%d\n", TreeSearch(root, 5));
 
@@ -110,14 +143,24 @@ int main()
         printf("Maximum value in the tree: %d\n", maxNode->data);
     else
         printf("The tree is empty.\n");
+
+    TreeNode *successorNode = TreeSuccessor(root);
+    if (successorNode != NULL)  
+        printf("Successor of root node (%d): %d\n", root->data, successorNode->data);
+    else
+        printf("The root node has no successor.\n");
+    
+    TreeNode *predecessorNode = TreePredecessor(root);
+    if (predecessorNode != NULL)    
+        printf("Predecessor of root node (%d): %d\n", root->data, predecessorNode->data);
+    else
+        printf("The root node has no predecessor.\n");
 }
 
-    //       10
-    //      /  \
-    //     5    15
-    //    / \   / \
-    //   2   7 12  20          
-   
+//       10
+//      /  \
+//     5    15
+//    / \   / \
+//   2   7 12  20
 
-
-    // 10 5 2 -1 -1 7 -1 -1 15 12 -1 -1 20 -1 -1
+// 10 5 2 -1 -1 7 -1 -1 15 12 -1 -1 20 -1 -1
